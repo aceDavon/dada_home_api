@@ -1,9 +1,16 @@
 import { hash } from "bcrypt"
 import { QueryResult } from "pg"
 import { Database } from "./database"
+import { TableInit } from "../../types/data-interface"
 
-export class Agents extends Database {
-  async createUser(email: string, password: string): Promise<Agent> {
+export class Agents extends Database implements TableInit {
+  async ensureTablesExist(): Promise<void> {
+      await this.ensureUsersTableExists()
+      await this.ensureAddressesTableExists()
+      await this.ensurePhonesTableExists()
+  }
+
+  async createAgent(email: string, password: string): Promise<Agent> {
     const hashedPassword = await hash(password, 10)
     const result = await this.query<Agent>(
       "INSERT INTO agents (email, password) VALUES ($1, $2) RETURNING *",
@@ -24,15 +31,15 @@ export class Agents extends Database {
     try {
       const result = await this.query<QueryResult>(
         "CREATE TABLE IF NOT EXISTS agents (" +
-          "id SERIAL PRIMARY KEY," +
+          "id UUID PRIMARY KEY DEFAULT uuid_generate_v4()," +
           "last_name VARCHAR(255) NULL," +
           "photo_url VARCHAR(250) NULL," +
           "first_name VARCHAR(255) NULL," +
           "password VARCHAR(255) NOT NULL," +
           "email VARCHAR(255) UNIQUE NOT NULL, " +
-          "updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()" +
+          "updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()," +
           "created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()," +
-          "email_verified_at TIMESTAMP WITH TIME ZONE DEFAULT NULL," +
+          "email_verified_at TIMESTAMP WITH TIME ZONE DEFAULT NULL" +
           ")"
       )
       console.log(`Agents table created: ${result.length} rows affected.`)
@@ -46,11 +53,11 @@ export class Agents extends Database {
     try {
       const result = await this.query<QueryResult>(
         `CREATE TABLE IF NOT EXISTS phones (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         phone_type VARCHAR(255) NOT NULL,
-        agent_id INTEGER REFERENCES agents(id)
+        agent_id UUID REFERENCES agents(id),
         phone_number VARCHAR(255) UNIQUE NOT NULL,
-        phone_verified_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+        phone_verified_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
       )`
       )
       console.log(`Phones table created: ${result.length} rows affected.`)
@@ -64,13 +71,13 @@ export class Agents extends Database {
     try {
       const result = await this.query<QueryResult>(
         `CREATE TABLE IF NOT EXISTS addresses (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         city VARCHAR(255) NOT NULL,
         state VARCHAR(255) NOT NULL,
         street VARCHAR(255) NOT NULL,
         country VARCHAR(255) NOT NULL,
         zip_code VARCHAR(255) NOT NULL,
-        agent_id INTEGER REFERENCES agents(id)
+        agent_id UUID REFERENCES agents(id)
       )`
       )
       console.log(`Addresses table created: ${result.length} rows affected.`)

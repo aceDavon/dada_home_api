@@ -1,5 +1,16 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./types", "./node_modules/@types"]
-  }
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "build",
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": "./src", // Set base path for module resolution
+    "paths": {
+      "*": ["*"]
+    }
+  },
+  "include": ["src/**/*"], // Include all TypeScript files in `src`
+  "exclude": ["node_modules", "build"] // Exclude these directories
 }
