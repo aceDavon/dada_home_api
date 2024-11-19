@@ -63,6 +63,33 @@ export class AgentController {
     }
   }
 
+  async updateAgentPhoto(req: Request, res: Response): Promise<void> {
+    const agentId = req.params.id
+
+    try {
+      if (!req.file) {
+        res.status(400).json({ error: "No file uploaded" })
+        return
+      }
+
+      const update = await this.AgentService.updateAgentPhoto(
+        agentId,
+        req.file.buffer
+      )
+
+      if (update) {
+        res.status(200).json({
+          msg: "Image uploaded successfully",
+        })
+      } else {
+        res.status(404).json({ msg: "Agent profile not found for update." })
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: "Image upload failed" })
+    }
+  }
+
   async removeAgent(req: Request, res: Response): Promise<void> {
     const { id } = req.query
 

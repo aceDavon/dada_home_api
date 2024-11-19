@@ -19,10 +19,10 @@ export class Agents extends Database implements TableInit {
     return result.rows[0]
   }
 
-  async getUserByEmail(email: string): Promise<Agent | null> {
+  async getUserById(id: string): Promise<Agent | null> {
     const result = await this.query<Agent>(
-      "SELECT * FROM agents WHERE email = $1",
-      [email]
+      "SELECT * FROM agents WHERE id = $1",
+      [id]
     )
     return result.rows[0] || null
   }
@@ -45,6 +45,18 @@ export class Agents extends Database implements TableInit {
     const result = await this.query<Agent>(query, [agentId, ...values])
 
     return result.rows[0] || null
+  }
+
+  async updateAgentPhoto(
+    agentId: string,
+    photoUrl: string
+  ): Promise<number | null> {
+    const result = await this.query(
+      "UPDATE agents SET photo_url = $1 WHERE id = $2",
+      [photoUrl, agentId]
+    )
+
+    return result.rowCount
   }
 
   async removeAgent(agentId: string): Promise<number | null> {

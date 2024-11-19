@@ -1,4 +1,5 @@
 import { Agent, Agents } from "../../app/db/agent"
+import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary"
 
 export class AgentService {
   private AgentDB: Agents
@@ -20,5 +21,17 @@ export class AgentService {
 
   async removeAgent(agentId: string): Promise<number | null> {
     return await this.AgentDB.removeAgent(agentId)
+  }
+
+  async updateAgentPhoto(
+    agentId: string,
+    fileBuffer: Buffer
+  ): Promise<number | null> {
+    const result = await uploadImageToCloudinary(
+      fileBuffer,
+      "agent-photos"
+    )
+
+    return await this.AgentDB.updateAgentPhoto(agentId, result.secure_url)
   }
 }
