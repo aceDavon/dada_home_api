@@ -1,7 +1,7 @@
 import { DB_CONFIG } from "./config/db"
-import { Agents } from "./db/agent"
-import { Appointment } from "./db/appointment"
-import { Property } from "./db/property"
+import { Agents } from "./repositories/agent"
+import { Appointment } from "./repositories/appointment"
+import { Property } from "./repositories/property"
 
 export async function ensureAllTables() {
   const agentDB = new Agents(DB_CONFIG)

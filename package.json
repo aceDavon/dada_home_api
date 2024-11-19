@@ -26,7 +26,9 @@
     "uuid": "^11.0.3"
   },
   "scripts": {
-    "dev": "nodemon main.ts"
+    "dev": "nodemon main.ts",
+    "migrate": "ts-node script/migrate.ts",
+    "make:migration": "ts-node script/generateMigration.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

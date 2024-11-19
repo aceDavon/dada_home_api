@@ -1,4 +1,4 @@
-import { Agent, Agents } from "../../app/db/agent"
+import { Agent, Agents } from "../../app/repositories/agent"
 import { uploadImageToCloudinary } from "../../utils/uploadImageToCloudinary"
 
 export class AgentService {
@@ -31,10 +31,7 @@ export class AgentService {
     agentId: string,
     fileBuffer: Buffer
   ): Promise<number | null> {
-    const result = await uploadImageToCloudinary(
-      fileBuffer,
-      "agent-photos"
-    )
+    const result = await uploadImageToCloudinary(fileBuffer, "agent-photos")
 
     return await this.AgentDB.updateAgentPhoto(agentId, result.secure_url)
   }

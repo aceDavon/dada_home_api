@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { Agents } from "../app/db/agent"
+import { Agents } from "../app/repositories/agent"
 import { DB_CONFIG } from "../app/config/db"
 import { AgentService } from "../services/agents/agents.service"
 import { AgentController } from "../controllers/agents/agents.controller"
