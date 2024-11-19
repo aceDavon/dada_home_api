@@ -12,4 +12,8 @@ const controller = new AgentController(agentService)
 
 router.post("/", controller.createAgent.bind(controller))
 
+router.patch("/", controller.updateAgent.bind(controller))
+
+router.delete("/", controller.removeAgent.bind(controller))
+
 export default router

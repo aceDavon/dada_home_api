@@ -13,11 +13,14 @@ export abstract class Database {
     this.pool = new Pool(config)
   }
 
-  async query<T>(text: string, params?: any[]): Promise<T[]> {
+  async query<T>(
+    text: string,
+    params?: any[]
+  ): Promise<{ rows: T[]; rowCount: number | null }> {
     const client = await this.pool.connect()
     try {
       const result = await client.query(text, params)
-      return result.rows as T[]
+      return { rows: result.rows as T[], rowCount: result.rowCount }
     } catch (err) {
       console.error(err)
       throw err

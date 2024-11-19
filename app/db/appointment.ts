@@ -37,7 +37,7 @@ export class Appointment extends Database implements TableInit {
         start_time TIMESTAMP WITH TIME ZONE NOT NULL
         );`
       )
-      console.log(`Appointment table created: ${result.length} rows affected`)
+      console.log(`Appointment table created: ${result.rowCount} rows affected`)
     } catch (err) {
       console.error("Error creating appointment table:", err)
       process.exit(1)

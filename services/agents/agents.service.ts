@@ -1,4 +1,4 @@
-import { Agents } from "../../app/db/agent"
+import { Agent, Agents } from "../../app/db/agent"
 
 export class AgentService {
   private AgentDB: Agents
@@ -8,8 +8,17 @@ export class AgentService {
   }
 
   async createAgent({ email, password }: { email: string; password: string }) {
-    const agent = await this.AgentDB.createAgent(email, password)
+    return await this.AgentDB.createAgent(email, password)
+  }
 
-    return agent
+  async updateAgent(
+    agentId: string,
+    data: Partial<Agent>
+  ): Promise<Agent | null> {
+    return this.AgentDB.updateAgent(agentId, data)
+  }
+
+  async removeAgent(agentId: string): Promise<number | null> {
+    return await this.AgentDB.removeAgent(agentId)
   }
 }

@@ -38,7 +38,7 @@ export class Property extends Database implements TableInit {
         inspection_count INTEGER DEFAULT 0,
         agent_id UUID REFERENCES agents(id)
       )`)
-      console.log(`Property table created: ${result.length} rows affected.`)
+      console.log(`Property table created: ${result.rowCount} rows affected.`)
     } catch (err) {
       console.error("Error creating property table:", err)
       process.exit(1)
