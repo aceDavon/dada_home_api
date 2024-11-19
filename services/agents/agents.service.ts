@@ -12,6 +12,10 @@ export class AgentService {
     return await this.AgentDB.createAgent(email, password)
   }
 
+  async getAgent(id: string): Promise<Agent | null> {
+    return await this.AgentDB.getAgentById(id)
+  }
+
   async updateAgent(
     agentId: string,
     data: Partial<Agent>

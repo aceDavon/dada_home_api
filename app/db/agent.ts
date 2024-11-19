@@ -19,7 +19,7 @@ export class Agents extends Database implements TableInit {
     return result.rows[0]
   }
 
-  async getUserById(id: string): Promise<Agent | null> {
+  async getAgentById(id: string): Promise<Agent | null> {
     const result = await this.query<Agent>(
       "SELECT * FROM agents WHERE id = $1",
       [id]

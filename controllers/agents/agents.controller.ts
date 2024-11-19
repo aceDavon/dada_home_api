@@ -31,6 +31,29 @@ export class AgentController {
     }
   }
 
+  async getAgentAccount(req: Request, res: Response): Promise<void> {
+    const agentId = req.query.id as string
+
+    if (!agentId) {
+      res.status(400).json({ msg: "Please provide agent ID" })
+      return
+    }
+
+    try {
+      const agent = await this.AgentService.getAgent(agentId)
+
+      if (agent) {
+        const { password: _, ...safeData } = agent
+        res.status(200).json({ msg: "successful", data: safeData })
+      } else {
+        res.status(400).json({ msg: "Agent with ID does not exist" })
+      }
+    } catch (err) {
+      console.error("Error getting agent", err)
+      res.status(500).json({ msg: "Error getting agent" })
+    }
+  }
+
   async updateAgent(req: Request, res: Response): Promise<void> {
     const agentId = req.query.id as string
     const updateData = req.body

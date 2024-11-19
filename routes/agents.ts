@@ -11,6 +11,8 @@ const db = new Agents(DB_CONFIG)
 const agentService = new AgentService(db)
 const controller = new AgentController(agentService)
 
+router.get("/", controller.getAgentAccount.bind(controller))
+
 router.post("/", controller.createAgent.bind(controller))
 
 router.patch("/", controller.updateAgent.bind(controller))
