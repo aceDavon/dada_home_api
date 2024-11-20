@@ -3,6 +3,7 @@ dotenv.config()
 
 import express from "express"
 import agentRoutes from "./routes/agents"
+import appointmentRoutes from "./routes/appointments"
 import { ensureAllTables } from "./app/bootstrap"
 
 const app = express()
@@ -16,6 +17,7 @@ ensureAllTables()
     console.log("Database initialization complete.")
 
     app.use("/api/agent", agentRoutes)
+    app.use("/api/appointment", appointmentRoutes)
 
     app.listen(port, () => {
       console.log(`Server listening on port ${port}`)

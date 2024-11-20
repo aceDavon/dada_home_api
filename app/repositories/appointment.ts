@@ -38,9 +38,51 @@ export class Appointment extends Database implements TableInit {
       data.propertyId || null,
     ]
 
-    const result = await this.query(query, values)
+    const result = await this.query<AppointmentData>(query, values)
 
-    return result.rows[0] as AppointmentData
+    return result.rows[0]
+  }
+
+  async getAppointments(): Promise<AppointmentData[]> {
+    const appointmentsData = await this.query<AppointmentData>(
+      "SELECT * FROM appointments"
+    )
+
+    return appointmentsData.rows
+  }
+
+  async getPropertyAppointments(
+    propertyId: string
+  ): Promise<AppointmentData[]> {
+    const query = "SELECT * FROM appointments WHERE property_id = $1"
+
+    const appointments = await this.query<AppointmentData>(query, [propertyId])
+
+    return appointments.rows
+  }
+
+  async updatePropertyAppointment(
+    appointmentId: string,
+    data: Record<string, string>
+  ) {
+    const fields = Object.keys(data)
+    const values = Object.keys(data)
+
+    if (fields.length === 0) {
+      throw new Error("No fields provided for update.")
+    }
+
+    const setClause = fields
+      .map((field, i) => `${field} = $${i + 2}`)
+      .join(", ")
+
+    const query = `UPDATE appointments Set ${setClause} where id = $1 RETURNING *`
+    const result = await this.query<number | null>(query, [
+      appointmentId,
+      ...values,
+    ])
+
+    return result.rowCount
   }
 
   async ensureAppointmentTableExists() {
