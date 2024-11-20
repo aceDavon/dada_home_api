@@ -31,13 +31,13 @@ function getMigrationTemplate(name: string, table: string): string {
 
 const ${constructTableName(name)}: SchemaMigration = {
   tableName: "${table}",
-  schema: {
-    id: "UUID PRIMARY KEY DEFAULT uuid_generate_v4()",
+  schema: [
+    "id UUID PRIMARY KEY DEFAULT uuid_generate_v4()",
     // Add your additional table-specific columns here
-    // e.g., columnName: "DATA_TYPE CONSTRAINTS"
-    created_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
-    updated_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
-  },
+    // e.g., "columnName DATA_TYPE CONSTRAINTS"
+    "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
+    "updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+  ],
   dropExtraColumns: false, // Change to true to drop columns not in the schema
 };
 

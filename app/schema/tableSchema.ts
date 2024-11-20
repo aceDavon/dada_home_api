@@ -2,26 +2,22 @@ import { QueryResult, QueryResultRow } from "pg"
 import { Database } from "../repositories/database"
 
 export class SchemaManager extends Database {
-  /**
-   * Ensures a table matches the desired schema by adding, modifying, or removing columns.
-   * @param tableName - The name of the table to alter.
-   * @param desiredSchema - The desired schema definition as a mapping of column names to their data types and constraints.
-   * @param dropExtraColumns - Whether to drop columns not defined in the desired schema. Defaults to false.
-   * @returns A promise that resolves when the schema changes are applied.
-   */
   async ensureTableSchema(
     tableName: string,
-    desiredSchema: Record<string, string>,
+    desiredSchema: string[],
     dropExtraColumns = false
   ): Promise<void> {
     try {
+      // Convert schema array to an object
+      const desiredSchemaMap = this.parseSchemaArray(desiredSchema)
+
       // Fetch current schema from the database
       const currentSchema = await this.getTableSchema(tableName)
 
       // Generate ALTER TABLE statements
       const alterStatements = this.getSchemaDiff(
         tableName,
-        desiredSchema,
+        desiredSchemaMap,
         currentSchema,
         dropExtraColumns
       )
@@ -45,10 +41,26 @@ export class SchemaManager extends Database {
   }
 
   /**
-   * Fetches the schema of a given table from the database.
-   * @param tableName - The name of the table to fetch the schema for.
-   * @returns A mapping of column names to their data types and constraints.
+   * Converts an array of schema definitions into a map of column names to definitions.
+   * @param schemaArray - Array of column definitions as strings.
+   * @returns A map of column names to their SQL definitions.
    */
+  private parseSchemaArray(schemaArray: string[]): Record<string, string> {
+    const schemaMap: Record<string, string> = {}
+
+    for (const definition of schemaArray) {
+      const match = definition.match(/^(\w+)\s+(.*)$/)
+      if (match) {
+        const [, columnName, columnDefinition] = match
+        schemaMap[columnName] = columnDefinition
+      } else {
+        throw new Error(`Invalid schema definition: '${definition}'`)
+      }
+    }
+
+    return schemaMap
+  }
+
   private async getTableSchema(
     tableName: string
   ): Promise<Record<string, string>> {
@@ -73,14 +85,6 @@ export class SchemaManager extends Database {
     return schema
   }
 
-  /**
-   * Compares the desired schema with the current schema and generates ALTER TABLE statements.
-   * @param tableName - The name of the table to update.
-   * @param desiredSchema - The desired schema definition.
-   * @param currentSchema - The current schema definition.
-   * @param dropExtraColumns - Whether to drop columns not in the desired schema.
-   * @returns An array of ALTER TABLE SQL statements.
-   */
   private getSchemaDiff(
     tableName: string,
     desiredSchema: Record<string, string>,
@@ -114,9 +118,8 @@ export class SchemaManager extends Database {
     return statements
   }
 }
-
 export interface SchemaMigration {
   tableName: string
-  schema: Record<string, string>
+  schema: string[]
   dropExtraColumns: boolean
 }
