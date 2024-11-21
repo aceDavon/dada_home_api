@@ -21,9 +21,21 @@ export class Agents extends Database implements TableInit {
 
   async getAgentById(id: string): Promise<Agent | null> {
     const result = await this.query<Agent>(
-      "SELECT * FROM agents WHERE id = $1",
+      `
+  SELECT 
+    agents.*,
+    COALESCE(
+      json_agg(properties) FILTER (WHERE properties.id IS NOT NULL), 
+      '[]'
+    ) AS properties
+  FROM agents
+  LEFT JOIN properties ON agents.id = properties.agent_id
+  WHERE agents.id = $1
+  GROUP BY agents.id;
+  `,
       [id]
     )
+
     return result.rows[0] || null
   }
 
