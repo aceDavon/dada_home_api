@@ -87,7 +87,7 @@ export class PropertyController {
   }
 
   async updateProperties(req: Request, res: Response): Promise<void> {
-    const { data }: { data: Record<string, string> } = req.body
+    const data: Record<string, string> = req.body
     const { id } = req.query
 
     if (!data && typeof data !== "object" && !id) {

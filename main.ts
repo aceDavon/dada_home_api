@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import express from "express"
+import cookieParser from "cookie-parser"
 import agentRoutes from "./routes/agents"
 import propertyRoutes from "./routes/properties"
 import appointmentRoutes from "./routes/appointments"
@@ -12,6 +13,7 @@ const port = 3000
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(cookieParser())
 
 ensureAllTables()
   .then(() => {

@@ -29,12 +29,15 @@ export class Appointment extends Database implements TableInit {
         INSERT INTO appointments (notes, appointment_type, appointment_time, property_id)
         VALUES ($1, $2, $3, $4)
         RETURNING *;
-      `
+    `
+
+    const dataArr = JSON.parse(data.appointmentTime)
+    const formattedRange = `[${dataArr[0]},${dataArr[1]})`
 
     const values = [
       data.notes || null,
       data.appointmentType,
-      `[${data.appointmentTime[0]},${data.appointmentTime[1]}]`,
+      formattedRange,
       data.propertyId || null,
     ]
 
@@ -56,9 +59,15 @@ export class Appointment extends Database implements TableInit {
   ): Promise<AppointmentData[]> {
     const query = "SELECT * FROM appointments WHERE property_id = $1"
 
-    const appointments = await this.query<AppointmentData>(query, [propertyId])
+    const result = await this.query<AppointmentReturnData>(query, [propertyId])
+    const appointments = result.rows.map((row) => ({
+      ...row,
+      appointmentTime: this.formatTsRange(row.appointment_time),
+      propertyId: row.property_id,
+      appointmentType: row.appointment_type
+    }))
 
-    return appointments.rows
+    return appointments
   }
 
   async updatePropertyAppointment(
@@ -107,6 +116,13 @@ export class Appointment extends Database implements TableInit {
 export interface AppointmentData {
   notes?: string
   appointmentType: string
-  appointmentTime: [string, string] // Start and end times in ISO string format
+  appointmentTime: string
   propertyId?: string
+}
+
+interface AppointmentReturnData {
+  notes: string
+  appointment_type: string
+  appointment_time: string
+  property_id: string
 }

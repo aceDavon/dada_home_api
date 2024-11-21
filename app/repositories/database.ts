@@ -28,4 +28,14 @@ export abstract class Database {
       client.release()
     }
   }
+
+  formatTsRange(tsrange: string): string {
+    // Example input: "[\"2022-03-20 00:00:00\",\"2022-03-21 00:00:00\")"
+    const match = tsrange.match(/^\["(.+?)","(.+?)"\)$/)
+    if (!match) {
+      throw new Error(`Invalid tsrange format: ${tsrange}`)
+    }
+
+    return `[${match[1]},${match[2]}]`
+  }
 }

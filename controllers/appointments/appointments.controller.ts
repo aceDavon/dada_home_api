@@ -9,7 +9,7 @@ export class AppointmentController {
 
     if (
       !this.validate([notes, appointmentType, appointmentTime, propertyId]) &&
-      !Array.isArray(appointmentTime)
+      !Array.isArray(JSON.parse(appointmentTime))
     ) {
       res
         .status(400)

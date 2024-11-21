@@ -71,7 +71,7 @@ export class Property extends Database implements TableInit {
     data: Record<string, string | number>
   ) {
     const fields = Object.keys(data)
-    const values = Object.keys(data)
+    const values = Object.values(data)
 
     if (fields.length === 0) {
       throw new Error("No fields provided for update.")
