@@ -3,6 +3,7 @@ dotenv.config()
 
 import express from "express"
 import cookieParser from "cookie-parser"
+import authRoutes from "./routes/auth"
 import agentRoutes from "./routes/agents"
 import propertyRoutes from "./routes/properties"
 import appointmentRoutes from "./routes/appointments"
@@ -18,6 +19,9 @@ app.use(cookieParser())
 ensureAllTables()
   .then(() => {
     console.log("Database initialization complete.")
+
+    // Authentication routes
+    app.use("/auth", authRoutes)
 
     app.use("/api/agent", agentRoutes)
     app.use("/api/property", propertyRoutes)
