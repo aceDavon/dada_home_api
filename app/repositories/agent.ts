@@ -147,4 +147,11 @@ export interface Agent {
   first_name: string
   last_name: string
   photo_url: string
+  google_id?: string
+}
+
+export interface UserData {
+  googleId: string
+  email: string
+  name: string
 }

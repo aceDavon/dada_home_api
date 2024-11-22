@@ -8,6 +8,8 @@ import agentRoutes from "./routes/agents"
 import propertyRoutes from "./routes/properties"
 import appointmentRoutes from "./routes/appointments"
 import { ensureAllTables } from "./app/bootstrap"
+import passport from "passport"
+import "./app/config/auth/passport"
 
 const app = express()
 const port = 3000
@@ -15,6 +17,7 @@ const port = 3000
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
+app.use(passport.initialize())
 
 ensureAllTables()
   .then(() => {
