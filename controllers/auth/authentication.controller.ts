@@ -30,7 +30,7 @@ class AuthController {
       sameSite: "strict",
     })
 
-    res.json({ msg: "Login successful", user: { id: agent.rows[0].id } })
+    res.json({ msg: "Login successful", data: { id: agent.rows[0].id } })
   }
 
   static logout(req: Request, res: Response) {
