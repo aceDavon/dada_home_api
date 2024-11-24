@@ -6,11 +6,11 @@
     "outDir": "build",
     "esModuleInterop": true,
     "strict": true,
-    "baseUrl": "./src", // Set base path for module resolution
+    "baseUrl": "./src",
     "paths": {
       "*": ["*"]
     }
   },
-  "include": ["src/**/*"], // Include all TypeScript files in `src`
-  "exclude": ["node_modules", "build"] // Exclude these directories
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build"]
 }

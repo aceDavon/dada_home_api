@@ -17,7 +17,7 @@ const port = 3000
 
 const corsOptions = {
   origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
 }
 
@@ -33,7 +33,7 @@ ensureAllTables()
     console.log("Database initialization complete.")
 
     // Authentication routes
-    app.use("/auth", authRoutes)
+    app.use("/api/auth", authRoutes)
 
     app.use("/api/agent", agentRoutes)
     app.use("/api/property", propertyRoutes)
