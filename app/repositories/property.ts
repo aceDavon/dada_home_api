@@ -6,7 +6,7 @@ export class Property extends Database implements TableInit {
   /**
    * Ensures the existence of the 'properties' table in the database.
    * If the table does not exist, it will be created with the specified columns.
-   * @remarks - This function is responsible for maintaining the integrity of 
+   * @remarks - This function is responsible for maintaining the integrity of
    * the 'properties' table in the database.
    * It uses the provided database connection to execute a SQL query to create
    * the table if it does not exist.
@@ -22,7 +22,7 @@ export class Property extends Database implements TableInit {
 
   async createProperty(data: PropertyData): Promise<PropertyData> {
     const query =
-      "INSERT INTO properties (address, city, state, zip_code, country, inspection_count, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *"
+      "INSERT INTO properties (address, city, state, price, zip_code, country, inspection_count, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *"
 
     const values = [
       data.address,
@@ -47,9 +47,7 @@ export class Property extends Database implements TableInit {
     return properties.rows
   }
 
-  async getProperty(
-    propertyId: string
-  ): Promise<PropertyData> {
+  async getProperty(propertyId: string): Promise<PropertyData> {
     const query = `SELECT 
     properties.*,
     COALESCE(
@@ -90,6 +88,42 @@ export class Property extends Database implements TableInit {
     return result.rowCount
   }
 
+  async getFilteredProperties(agentId: string, filters: FilterCriteria) {
+    const { category, minPrice, maxPrice, address } = filters
+
+    let query = `
+      SELECT * FROM properties
+      WHERE agent_id = $1
+    `
+    const queryParams: any[] = [agentId]
+    let index = 2
+
+    if (category) {
+      query += ` AND category = $${index++}`
+      queryParams.push(category)
+    }
+    // if (startDate && endDate) {
+    //   query += ` AND start_date >= $${index++} AND end_date <= $${index++}`
+    //   queryParams.push(startDate, endDate)
+    // }
+    if (minPrice !== undefined) {
+      query += ` AND price >= $${index++}`
+      queryParams.push(minPrice)
+    }
+    if (maxPrice !== undefined) {
+      query += ` AND price <= $${index++}`
+      queryParams.push(maxPrice)
+    }
+    if (address) {
+      query += ` AND address ILIKE $${index++}`
+      queryParams.push(`%${location}%`)
+    }
+
+    query += " ORDER BY price ASC"
+
+    return this.query<PropertyData>(query, queryParams).then((result) => result.rows)
+  }
+
   async ensurePropertyTableExists() {
     try {
       const result = await this.query<QueryResult>(`
@@ -116,8 +150,16 @@ export interface PropertyData {
   address: string
   city: string
   state: string
+  price: string
   zip_code?: string
   country: string
   inspection_count?: number
   agent_id: string
+}
+
+export interface FilterCriteria {
+  category?: string
+  minPrice?: number
+  maxPrice?: number
+  address?: string
 }

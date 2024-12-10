@@ -1,13 +1,17 @@
-import { Property, PropertyData } from "../../app/repositories/property";
+import {
+  FilterCriteria,
+  Property,
+  PropertyData,
+} from "../../app/repositories/property"
 
 export class PropertyService {
-  constructor(private propertyDB: Property) { }
-  
+  constructor(private propertyDB: Property) {}
+
   async createProperty(data: PropertyData): Promise<PropertyData> {
     return await this.propertyDB.createProperty(data)
   }
 
-  async getProperty(propertyId: string): Promise<PropertyData> { 
+  async getProperty(propertyId: string): Promise<PropertyData> {
     return await this.propertyDB.getProperty(propertyId)
   }
 
@@ -15,7 +19,17 @@ export class PropertyService {
     return await this.propertyDB.getProperties()
   }
 
-  async updateProperty(propertyId: string, data: Record<string, string | number>) {
+  async filteredPropertiesData(
+    agentId: string,
+    filters: FilterCriteria
+  ): Promise<PropertyData[]> {
+    return await this.propertyDB.getFilteredProperties(agentId, filters)
+  }
+
+  async updateProperty(
+    propertyId: string,
+    data: Record<string, string | number>
+  ) {
     return await this.propertyDB.updateProperty(propertyId, data)
   }
 }

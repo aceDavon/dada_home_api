@@ -34,6 +34,7 @@ ensureAllTables()
 
     // Authentication routes
     app.use("/api/auth", authRoutes)
+    app.use("/auth", authRoutes)
 
     app.use("/api/agent", agentRoutes)
     app.use("/api/property", propertyRoutes)

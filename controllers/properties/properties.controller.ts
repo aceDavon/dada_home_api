@@ -9,6 +9,7 @@ export class PropertyController {
       address,
       city,
       state,
+      price,
       zip_code,
       country,
       inspection_count,
@@ -20,6 +21,7 @@ export class PropertyController {
         address,
         city,
         state,
+        price,
         zip_code,
         country,
         inspection_count,
@@ -37,6 +39,7 @@ export class PropertyController {
         address,
         city,
         state,
+        price,
         zip_code,
         country,
         inspection_count,
@@ -64,9 +67,7 @@ export class PropertyController {
       const property = await this.PropertyDB.getProperty(id)
 
       if (!property) {
-        res
-          .status(404)
-          .json({ msg: "Property not found for this ID" })
+        res.status(404).json({ msg: "Property not found for this ID" })
       } else {
         res.status(200).json({ msg: "Sucessful", data: property })
       }
@@ -76,13 +77,41 @@ export class PropertyController {
     }
   }
 
-  async getProperties(req: Request, res: Response): Promise<void> {
+  async getProperties(res: Response): Promise<void> {
     try {
       const properties = await this.PropertyDB.getProperties()
       res.status(200).json({ msg: "Successful", data: properties })
     } catch (err) {
       console.error("Error while getting properties:", err)
       res.status(500).json({ msg: "Error while getting properties" })
+    }
+  }
+
+  async getFilteredProperties(req: Request, res: Response) {
+    const { agentId } = req.params
+    const {
+      category,
+      minPrice,
+      maxPrice,
+      location,
+    } = req.query
+
+    try {
+      const filters = {
+        category: category as string,
+        minPrice: minPrice ? Number(minPrice) : undefined,
+        maxPrice: maxPrice ? Number(maxPrice) : undefined,
+        address: location as string,
+      }
+
+      const properties = await this.PropertyDB.filteredPropertiesData(
+        agentId,
+        filters
+      )
+      res.status(200).json({ data: properties })
+    } catch (error) {
+      console.error("Error fetching filtered properties:", error)
+      res.status(500).json({ error: "Failed to fetch properties" })
     }
   }
 

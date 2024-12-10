@@ -4,6 +4,7 @@ import { Property } from "../app/repositories/property"
 import { PropertyService } from "../services/properties/properties.service"
 import { PropertyController } from "../controllers/properties/properties.controller"
 import { authMiddleware } from "../controllers/auth/middleware/authMiddleware.setup"
+import { validateFilters } from "../utils/queryParamsValidator"
 
 const router = Router()
 
@@ -13,6 +14,13 @@ const controller = new PropertyController(appointmentService)
 
 router.get("/", authMiddleware, controller.getProperties.bind(controller))
 router.get("/:id", authMiddleware, controller.getProperty.bind(controller))
+
+router.get(
+  "/agents/:agentId/properties",
+  authMiddleware,
+  validateFilters,
+  controller.getFilteredProperties.bind(controller)
+)
 
 router.post("/", authMiddleware, controller.createProperty.bind(controller))
 
